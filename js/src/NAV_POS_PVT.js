@@ -26,7 +26,7 @@ var Parser = require('binary-parser').Parser;
  *                            0x05 = Time only fix
  *                            0x06..0xff: reserved
  * @field {number} flags     Fix Status Flags (see graphic below)
- * @field {number} reserved1 Reserved
+ * @field {number} flags2    Additional flags (see graphic below)
  * @field {number} numSV     Number of satellites used in Nav Solution
  * @field {number} lon       Longitude
  * @field {number} lat       Latitude
@@ -42,17 +42,15 @@ var Parser = require('binary-parser').Parser;
  * @field {number} sAcc      Speed accuracy estimate
  * @field {number} headAcc   Heading accuracy estimate (both motion and vehicle)
  * @field {number} pDOP      Position DOP
- * @field {number} reserved2a     Reserved
- * @field {number} reserved2b     Reserved
- * @field {number} reserved2c     Reserved
- * @field {number} reserved2d     Reserved
- * @field {number} reserved2e     Reserved
- * @field {number} reserved2f     Reserved
+ * @field {number} reserved1a     Reserved
+ * @field {number} reserved1b     Reserved
+ * @field {number} reserved1c     Reserved
+ * @field {number} reserved1d     Reserved
+ * @field {number} reserved1e     Reserved
+ * @field {number} reserved1f     Reserved
  * @field {number} headVeh        Heading of vehicle (2-D)
- * @field {number} reserved3a     Reserved
- * @field {number} reserved3b     Reserved
- * @field {number} reserved3c     Reserved
- * @field {number} reserved3d     Reserved
+ * @field {number} magDec         Magnetic declination
+ * @field {number} magAcc         Magnetic declination accuracy
  *
  * @param ubx An UBX object with a payload to be decoded.
  */
@@ -78,7 +76,7 @@ NavPVT.prototype.parser = new Parser()
   .int32le('nano')
   .uint8('fixType')
   .uint8('flags')
-  .uint8('reserved1')
+  .uint8('flags2')
   .uint8('numSV')
   .int32le('lon')
   .int32le('lat')
@@ -94,57 +92,54 @@ NavPVT.prototype.parser = new Parser()
   .uint32le('sAcc')
   .uint32le('headAcc')
   .uint16le('pDOP')
-  .uint8('reserved2a')
-  .uint8('reserved2b')
-  .uint8('reserved2c')
-  .uint8('reserved2d')
-  .uint8('reserved2e')
-  .uint8('reserved2f')
+  .uint8('reserved1a')
+  .uint8('reserved1b')
+  .uint8('reserved1c')
+  .uint8('reserved1d')
+  .uint8('reserved1e')
+  .uint8('reserved1f')
   .int32le('headVeh')
-  .uint8('reserved3a')
-  .uint8('reserved3b')
-  .uint8('reserved3c')
-  .uint8('reserved3d');
+  .int16le('magDec')
+  .uint16le('magAcc')
+  ;
 
 NavPVT.prototype.fieldSpec = [];
 NavPVT.prototype.fieldSpec.push(['iTOW', 'writeUInt32LE', 4]);
-NavPVT.prototype.fieldSpec.push(['year', 'writeUInt16', 2]);
+NavPVT.prototype.fieldSpec.push(['year', 'writeUInt16LE', 2]);
 NavPVT.prototype.fieldSpec.push(['month', 'writeUInt8', 1]);
 NavPVT.prototype.fieldSpec.push(['day', 'writeUInt8', 1]);
 NavPVT.prototype.fieldSpec.push(['hour', 'writeUInt8', 1]);
 NavPVT.prototype.fieldSpec.push(['min', 'writeUInt8', 1]);
 NavPVT.prototype.fieldSpec.push(['sec', 'writeUInt8', 1]);
 NavPVT.prototype.fieldSpec.push(['valid', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['tAcc', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['nano', 'writeFloatLE', 4]);
+NavPVT.prototype.fieldSpec.push(['tAcc', 'writeUInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['nano', 'writeInt32LE', 4]);
 NavPVT.prototype.fieldSpec.push(['fixType', 'writeUInt8', 1]);
 NavPVT.prototype.fieldSpec.push(['flags', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved1', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['flags2', 'writeUInt8', 1]);
 NavPVT.prototype.fieldSpec.push(['numSV', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['lon', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['lat', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['height', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['hMSL', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['hAcc', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['vAcc', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['velN', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['velE', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['velD', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['gSpeed', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['headMot', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['sAcc', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['headAcc', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['pDOP', 'writeFloatLE', 2]);
-NavPVT.prototype.fieldSpec.push(['reserved2a', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved2b', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved2c', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved2d', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved2e', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved2f', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['headVeh', 'writeFloatLE', 4]);
-NavPVT.prototype.fieldSpec.push(['reserved3a', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved3b', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved3c', 'writeUInt8', 1]);
-NavPVT.prototype.fieldSpec.push(['reserved3d', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['lon', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['lat', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['height', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['hMSL', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['hAcc', 'writeUInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['vAcc', 'writeUInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['velN', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['velE', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['velD', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['gSpeed', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['headMot', 'writeInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['sAcc', 'writeUInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['headAcc', 'writeUInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['pDOP', 'writeUInt16LE', 2]);
+NavPVT.prototype.fieldSpec.push(['reserved1a', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['reserved1b', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['reserved1c', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['reserved1d', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['reserved1e', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['reserved1f', 'writeUInt8', 1]);
+NavPVT.prototype.fieldSpec.push(['headVeh', 'writeUInt32LE', 4]);
+NavPVT.prototype.fieldSpec.push(['magDec', 'writeInt16LE', 2]);
+NavPVT.prototype.fieldSpec.push(['magAcc', 'writeUInt16LE', 2]);
 
 module.exports = NavPVT;
