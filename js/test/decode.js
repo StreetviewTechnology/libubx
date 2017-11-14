@@ -47,6 +47,12 @@ describe('Check parsing of navigation message', function () {
     const packetParsed = ubx.decode(packet);
     t.assert(JSON.stringify(packetParsed.fields) === JSON.stringify(expected));
   });
+
+  it('Validate ESF_STATUS', function () {
+    const packet = textPacketToBinary('B5 62 10 10 2C 00 F0 FE FE 0C 02 24 02 00 00 00 00 00 00 00 00 07 85 04 0A 00 8C 04 0A 00 8D 04 0A 00 21 00 8E 04 0A 00 90 04 0A 00 91 04 0A 00 92 04 0A 00 B4 D5');
+    const packetParsed = ubx.decode(packet);
+    t.assert(packetParsed.fields.numSens === 7);   
+  });
 });
 
 function textPacketToBinary(text) {

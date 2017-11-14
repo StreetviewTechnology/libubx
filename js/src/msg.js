@@ -58,6 +58,9 @@ var ubxTable = {
   },
   0x28: {
     0x00: require('./HNR_PVT.js')/*HnrPvt*/
+  },
+  0x10: {
+    0x10: require('./ESF_STATUS.js') /*EsfStatus*/
   }
 };
 
